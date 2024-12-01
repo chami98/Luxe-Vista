@@ -7,18 +7,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class ExploreRoomsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewRooms;
-    private Spinner spinnerRoomType, spinnerPriceRange;
+    private FirebaseFirestore db;
     private Button btnBookSpa, btnBookDining, btnReserve;
 
     @Override
@@ -32,101 +35,86 @@ public class ExploreRoomsActivity extends AppCompatActivity {
         btnBookDining = findViewById(R.id.btnBookDining);
         btnReserve = findViewById(R.id.btnReserve);
 
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
         // Setup RecyclerView
         recyclerViewRooms.setLayoutManager(new LinearLayoutManager(this));
 
         // Set onClickListener for Spa Button
-        btnBookSpa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ExploreRoomsActivity.this, "Spa reservation feature coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnBookSpa.setOnClickListener(v ->
+                Toast.makeText(ExploreRoomsActivity.this, "Spa reservation feature coming soon!", Toast.LENGTH_SHORT).show());
 
         // Set onClickListener for Dining Button
-        btnBookDining.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ExploreRoomsActivity.this, "Dining reservation feature coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnBookDining.setOnClickListener(v ->
+                Toast.makeText(ExploreRoomsActivity.this, "Dining reservation feature coming soon!", Toast.LENGTH_SHORT).show());
 
         // Set onClickListener for Reserve Button
-        btnReserve.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Implement logic to finalize reservation
-                Toast.makeText(ExploreRoomsActivity.this, "Reservation confirmed!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnReserve.setOnClickListener(v ->
+                Toast.makeText(ExploreRoomsActivity.this, "Reservation confirmed!", Toast.LENGTH_SHORT).show());
 
-        // Placeholder logic to populate RecyclerView with rooms
-        populateRoomList();
+        // Fetch room data from Firestore
+        fetchRoomData();
     }
 
-    // Method to populate the RecyclerView with rooms (This can be enhanced with actual data)
-    private void populateRoomList() {
-        // Create a list of rooms (Placeholder data)
-        // You can replace this with actual data coming from a server or local database
+    // Fetch room data from Firestore
+    private void fetchRoomData() {
+        db.collection("rooms")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Handle Firestore data
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                            // Convert Firestore documents into room objects
+                            Room[] rooms = new Room[querySnapshot.size()];
+                            int index = 0;
 
-        Room[] rooms = {
-                new Room(
-                        "Ocean View Suite",
-                        "Ocean view with a king-size bed, perfect for a luxurious stay in Tissamaharama. Experience breathtaking views of the Indian Ocean and the surrounding nature.",
-                        "$350 per night / LKR 129,500 per night",
-                        R.drawable.ocean_view,
-                        "King-size bed, Free Wi-Fi, Mini-bar, Private balcony, Jacuzzi, Complimentary breakfast",
-                        "2 Adults, 1 Child",
-                        "No smoking, No pets, Free cancellation up to 24 hours"
-                ),
-                new Room(
-                        "Deluxe Room",
-                        "Luxury room with a queen-size bed, featuring modern amenities and a view of the picturesque Tissamaharama lake and its wildlife.",
-                        "$250 per night / LKR 92,500 per night",
-                        R.drawable.deluxe,
-                        "Queen-size bed, Free Wi-Fi, Flat-screen TV, Coffee maker, Rain shower",
-                        "2 Adults",
-                        "No smoking, Pets allowed on request, Free cancellation up to 48 hours"
-                ),
-                new Room(
-                        "Garden View",
-                        "Room with a serene garden view and twin beds, ideal for guests looking to unwind amidst the lush greenery and natural beauty of Sri Lanka.",
-                        "$180 per night / LKR 66,600 per night",
-                        R.drawable.garden_view,
-                        "Twin beds, Free Wi-Fi, Garden patio, Air conditioning, Complimentary toiletries",
-                        "2 Adults or 2 Children",
-                        "No smoking, Pets allowed, Non-refundable"
-                )
-        };
+                            for (QueryDocumentSnapshot document : querySnapshot) {
+                                String title = document.getString("title");
+                                String description = document.getString("description");
+                                String price = document.getString("price");
+                                String amenities = document.getString("amenities");
+                                String occupancy = document.getString("occupancy");
+                                String policies = document.getString("policies");
+                                String imageUrl = document.getString("imageUrl"); // Get the image URL from Firestore
 
+                                // Create Room object and add to the rooms array
+                                rooms[index] = new Room(title, description, price, imageUrl, amenities, occupancy, policies);
+                                index++;
+                            }
 
-        RoomAdapter adapter = new RoomAdapter(rooms);
-        recyclerViewRooms.setAdapter(adapter);
+                            // Set the adapter with the fetched rooms
+                            RoomAdapter adapter = new RoomAdapter(rooms);
+                            recyclerViewRooms.setAdapter(adapter);
+                        }
+                    } else {
+                        Toast.makeText(ExploreRoomsActivity.this, "Error getting rooms: " + task.getException(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-    // Room class to represent room data
     // Room class to represent room data
     public static class Room {
         String title;
         String description;
         String price;
-        int imageResId; // Drawable resource ID for the room image
+        String imageUrl;  // Store the image URL here
         String amenities; // Amenities available in the room
         String occupancy; // Maximum occupancy
-        String policies; // Room policies
+        String policies;  // Room policies
 
-        public Room(String title, String description, String price, int imageResId, String amenities, String occupancy, String policies) {
+        // Constructor with imageUrl
+        public Room(String title, String description, String price, String imageUrl, String amenities, String occupancy, String policies) {
             this.title = title;
             this.description = description;
             this.price = price;
-            this.imageResId = imageResId;
+            this.imageUrl = imageUrl;
             this.amenities = amenities;
             this.occupancy = occupancy;
             this.policies = policies;
         }
     }
-
-
 
     // RoomAdapter class for RecyclerView
     public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
@@ -149,26 +137,25 @@ public class ExploreRoomsActivity extends AppCompatActivity {
             holder.tvRoomTitle.setText(room.title);
             holder.tvRoomDescription.setText(room.description);
             holder.tvRoomPrice.setText(room.price);
-            holder.ivRoomImage.setImageResource(room.imageResId);
+
+            // Use Glide to load the image from the URL into the ImageView
+            Glide.with(holder.ivRoomImage.getContext())
+                    .load(room.imageUrl)  // Load the image from the URL
+                    .into(holder.ivRoomImage);
 
             // Set click listener on the image
-            holder.ivRoomImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), RoomDetailsActivity.class);
-                    intent.putExtra("title", room.title);
-                    intent.putExtra("description", room.description);
-                    intent.putExtra("price", room.price);
-                    intent.putExtra("imageResId", room.imageResId);
-                    intent.putExtra("amenities", room.amenities);
-                    intent.putExtra("occupancy", room.occupancy);
-                    intent.putExtra("policies", room.policies);
-                    v.getContext().startActivity(intent);
-                }
+            holder.ivRoomImage.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), RoomDetailsActivity.class);
+                intent.putExtra("title", room.title);
+                intent.putExtra("description", room.description);
+                intent.putExtra("price", room.price);
+                intent.putExtra("imageUrl", room.imageUrl);  // Pass the image URL
+                intent.putExtra("amenities", room.amenities);
+                intent.putExtra("occupancy", room.occupancy);
+                intent.putExtra("policies", room.policies);
+                v.getContext().startActivity(intent);
             });
-
         }
-
 
         @Override
         public int getItemCount() {
