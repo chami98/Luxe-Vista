@@ -1,0 +1,14 @@
+<resources>
+    <!-- Primary Colors for Light and Dark Themes -->
+    <color name="primaryColor">#6200EE</color> <!-- Primary Color (Purple) -->
+    <color name="primaryDarkColor">#3700B3</color> <!-- Darker Primary Color -->
+    <color name="backgroundColor">#FFFFFF</color> <!-- Light Background Color -->
+    <color name="surfaceColor">#FFFFFF</color> <!-- Surface Color (usually background color for views) -->
+    <color name="onSurfaceColor">#000000</color> <!-- Text color on surface -->
+
+    <!-- Dark Theme Colors -->
+    <color name="backgroundColorDark">#121212</color> <!-- Dark Background Color -->
+    <color name="surfaceColorDark">#121212</color> <!-- Surface Color for Dark Theme -->
+    <color name="onSurfaceColorDark">#FFFFFF</color> <!-- Light Text for Dark Theme -->
+    <color name="primaryColorDark">#BB86FC</color> <!-- Lighter Purple for Dark Theme -->
+</resources>

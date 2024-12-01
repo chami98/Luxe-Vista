@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F9F9"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/contactUsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contact Us"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#3F51B5"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif-medium" />
+
+        <!-- Subtitle/Description -->
+        <TextView
+            android:id="@+id/contactUsDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="We'd love to hear from you! Please fill out the form below to get in touch."
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:layout_marginBottom="24dp"
+            android:fontFamily="sans-serif-light" />
+
+        <!-- Name Field -->
+        <EditText
+            android:id="@+id/contactUsName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Full Name"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:textColor="#333333"
+            android:textColorHint="#888888"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Email Field -->
+        <EditText
+            android:id="@+id/contactUsEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email Address"
+            android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:textColor="#333333"
+            android:textColorHint="#888888"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Message Field -->
+        <EditText
+            android:id="@+id/contactUsMessage"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:hint="Your Message"
+            android:inputType="textMultiLine"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:textColor="#333333"
+            android:textColorHint="#888888"
+            android:gravity="top"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/contactUsSubmitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:textSize="16sp"
+            android:backgroundTint="#3F51B5"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/rounded_button_background" />
+    </LinearLayout>
+</ScrollView>

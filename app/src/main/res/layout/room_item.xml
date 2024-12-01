@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_marginBottom="8dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/ivRoomImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvRoomTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Room Title"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvRoomDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Room Description"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/tvRoomPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$0 per night"
+        android:textSize="16sp"
+        android:textColor="#FF5722"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>
