@@ -13,20 +13,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText fullNameEditText, emailEditText, passwordEditText, confirmPasswordEditText;
     private Button registerButton;
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Initialize Firebase Auth
+        // Initialize Firebase Auth and Firestore
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         // Link XML elements
         fullNameEditText = findViewById(R.id.fullNameEditText);
@@ -89,13 +92,16 @@ public class RegisterActivity extends AppCompatActivity {
                                             .build())
                                     .addOnCompleteListener(profileTask -> {
                                         if (profileTask.isSuccessful()) {
+                                            // Successfully updated name
                                             Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+
+                                            // Add user details to Firestore
+                                            addUserToFirestore(user);
                                         } else {
                                             Toast.makeText(RegisterActivity.this, "Name update failed!", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                         }
-                        finish(); // Close RegisterActivity and return to MainActivity
                     } else {
                         // Registration failure
                         Log.w("RegisterError", "createUserWithEmail:failure", task.getException());
@@ -103,5 +109,55 @@ public class RegisterActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void addUserToFirestore(FirebaseUser user) {
+        String userId = user.getUid();
+        String email = user.getEmail();
+        String fullName = user.getDisplayName();
+
+        // Assuming by default new users are not admins
+        boolean isAdmin = false;  // Set this value as required, for example, if you're adding admin manually
+
+        // Create a new user object to add to Firestore
+        User userObj = new User(fullName, email, isAdmin);
+
+        // Add user data to Firestore
+        db.collection("users").document(email)  // Use email as the document ID
+                .set(userObj)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "User added to Firestore successfully");
+                    finish();  // Close RegisterActivity and return to MainActivity
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("FirestoreError", "Error adding user to Firestore", e);
+                    Toast.makeText(RegisterActivity.this, "Error saving user data to Firestore", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    // User model class
+    public class User {
+        private String name;
+        private String email;
+        private boolean isAdmin;
+
+        public User(String name, String email, boolean isAdmin) {
+            this.name = name;
+            this.email = email;
+            this.isAdmin = isAdmin;
+        }
+
+        // Getters
+        public String getName() {
+            return name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public boolean isAdmin() {
+            return isAdmin;
+        }
     }
 }

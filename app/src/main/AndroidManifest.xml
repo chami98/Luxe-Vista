@@ -40,6 +40,9 @@
         <activity
             android:name=".RoomDetailsActivity"
             android:exported="true"></activity>
+        <activity
+            android:name=".AdminActivity"
+            android:exported="true"></activity>
     </application>
 
 </manifest>

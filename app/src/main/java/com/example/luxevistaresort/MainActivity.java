@@ -16,15 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
-
 
     private EditText emailEditText, passwordEditText;
     private Button loginButton, registerButton;
     private TextView forgotPasswordTextView;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         // Link XML elements
         emailEditText = findViewById(R.id.emailEditText);
@@ -96,11 +99,8 @@ public class MainActivity extends AppCompatActivity {
                         String displayName = user.getDisplayName();
                         Toast.makeText(MainActivity.this, "Welcome, " + displayName, Toast.LENGTH_SHORT).show();
 
-                        // Pass the display name to DashboardActivity
-                        Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-                        intent.putExtra("USER_NAME", displayName);  // Pass the display name or email
-                        startActivity(intent);
-                        finish();
+                        // Check if the user is an admin
+                        checkIfAdmin(user.getEmail(), displayName, email);
                     } else {
                         // Sign-in failure
                         Log.w("LoginError", "signInWithEmail:failure", task.getException());
@@ -110,4 +110,33 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private void checkIfAdmin(String email, String displayName, String userEmail) {
+        // Assuming you have a collection for users and a field `isAdmin` that indicates if the user is an admin
+        DocumentReference userRef = db.collection("users").document(userEmail);
+
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Boolean isAdmin = documentSnapshot.getBoolean("admin");
+                if (isAdmin != null && isAdmin) {
+                    // Redirect to AdminActivity if the user is an admin
+                    Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
+                    adminIntent.putExtra("USER_NAME", displayName);
+                    adminIntent.putExtra("USER_EMAIL", userEmail);
+                    startActivity(adminIntent);
+                    finish();  // Close MainActivity
+                } else {
+                    // Redirect to DashboardActivity if the user is a regular user
+                    Intent userIntent = new Intent(MainActivity.this, DashboardActivity.class);
+                    userIntent.putExtra("USER_NAME", displayName);
+                    userIntent.putExtra("USER_EMAIL", userEmail);
+                    startActivity(userIntent);
+                    finish();  // Close MainActivity
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "User not found in database.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(MainActivity.this, "Error checking admin status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
 }

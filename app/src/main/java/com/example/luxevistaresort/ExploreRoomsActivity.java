@@ -2,6 +2,7 @@ package com.example.luxevistaresort;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,13 @@ public class ExploreRoomsActivity extends AppCompatActivity {
         btnBookDining = findViewById(R.id.btnBookDining);
         btnReserve = findViewById(R.id.btnReserve);
 
+        // Get the email and username passed from the previous activity
+        String userName = getIntent().getStringExtra("USER_NAME");
+        String email = getIntent().getStringExtra("USER_EMAIL");
+
+        // Log to verify if the data is received correctly
+        Log.d("ExploreRoomsActivity", "Received data: USER_EMAIL = " + email + ", USER_NAME = " + userName);
+
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
@@ -42,23 +50,26 @@ public class ExploreRoomsActivity extends AppCompatActivity {
         recyclerViewRooms.setLayoutManager(new LinearLayoutManager(this));
 
         // Set onClickListener for Spa Button
-        btnBookSpa.setOnClickListener(v ->
-                Toast.makeText(ExploreRoomsActivity.this, "Spa reservation feature coming soon!", Toast.LENGTH_SHORT).show());
+        btnBookSpa.setOnClickListener(v -> {
+            Toast.makeText(ExploreRoomsActivity.this, "Spa reservation feature coming soon!", Toast.LENGTH_SHORT).show();
+        });
 
         // Set onClickListener for Dining Button
-        btnBookDining.setOnClickListener(v ->
-                Toast.makeText(ExploreRoomsActivity.this, "Dining reservation feature coming soon!", Toast.LENGTH_SHORT).show());
+        btnBookDining.setOnClickListener(v -> {
+            Toast.makeText(ExploreRoomsActivity.this, "Dining reservation feature coming soon!", Toast.LENGTH_SHORT).show();
+        });
 
         // Set onClickListener for Reserve Button
-        btnReserve.setOnClickListener(v ->
-                Toast.makeText(ExploreRoomsActivity.this, "Reservation confirmed!", Toast.LENGTH_SHORT).show());
+        btnReserve.setOnClickListener(v -> {
+            Toast.makeText(ExploreRoomsActivity.this, "Reservation confirmed!", Toast.LENGTH_SHORT).show();
+        });
 
         // Fetch room data from Firestore
-        fetchRoomData();
+        fetchRoomData(userName, email);
     }
 
     // Fetch room data from Firestore
-    private void fetchRoomData() {
+    private void fetchRoomData(String userName, String email) {
         db.collection("rooms")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -84,8 +95,8 @@ public class ExploreRoomsActivity extends AppCompatActivity {
                                 index++;
                             }
 
-                            // Set the adapter with the fetched rooms
-                            RoomAdapter adapter = new RoomAdapter(rooms);
+                            // Set the adapter with the fetched rooms and pass user details
+                            RoomAdapter adapter = new RoomAdapter(rooms, email, userName);
                             recyclerViewRooms.setAdapter(adapter);
                         }
                     } else {
@@ -119,9 +130,13 @@ public class ExploreRoomsActivity extends AppCompatActivity {
     // RoomAdapter class for RecyclerView
     public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
         private Room[] rooms;
+        private String email;
+        private String userName;
 
-        public RoomAdapter(Room[] rooms) {
+        public RoomAdapter(Room[] rooms, String email, String userName) {
             this.rooms = rooms;
+            this.email = email;
+            this.userName = userName;
         }
 
         @Override
@@ -153,6 +168,11 @@ public class ExploreRoomsActivity extends AppCompatActivity {
                 intent.putExtra("amenities", room.amenities);
                 intent.putExtra("occupancy", room.occupancy);
                 intent.putExtra("policies", room.policies);
+
+                // Pass email and userName
+                intent.putExtra("USER_EMAIL", email);
+                intent.putExtra("USER_NAME", userName);
+                Log.d("RoomAdapter", "Passing data to RoomDetailsActivity: USER_EMAIL = " + email + ", USER_NAME = " + userName);
                 v.getContext().startActivity(intent);
             });
         }

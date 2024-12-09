@@ -147,5 +147,17 @@
             android:backgroundTint="#009688"
             android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_button_background" />
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#F44336"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button_background" />
+
     </LinearLayout>
 </ScrollView>
