@@ -107,7 +107,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
                     // Proceed with new booking as usual
                     showDatePickerDialog(getIntent().getStringExtra("USER_EMAIL"), getIntent().getStringExtra("title"), getIntent().getStringExtra("USER_NAME"), bookingId);
                 })
-                .setCancelable(false)
+                .setCancelable(true)
                 .show();
     }
 
