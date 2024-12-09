@@ -9,59 +9,86 @@
     tools:context=".AdminActivity">
 
     <!-- Welcome Message -->
-<TextView
-android:id="@+id/tvWelcomeMessage"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Welcome, Admin"
-android:textSize="20sp"
-android:textColor="#3F51B5"
-android:textStyle="bold"
-android:layout_marginBottom="16dp"
-android:fontFamily="sans-serif-medium"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvWelcomeMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome, Admin"
+        android:textSize="20sp"
+        android:textColor="#3F51B5"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Title TextView -->
-<TextView
-android:id="@+id/tvAdminTitle"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Bookings Management"
-android:textSize="24sp"
-android:textColor="#3F51B5"
-android:textStyle="bold"
-android:layout_marginBottom="16dp"
-android:fontFamily="sans-serif-medium"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintTop_toBottomOf="@id/tvWelcomeMessage" />
+    <TextView
+        android:id="@+id/tvAdminTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bookings Management"
+        android:textSize="24sp"
+        android:textColor="#3F51B5"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvWelcomeMessage" />
 
-    <!-- RecyclerView to display bookings -->
-<androidx.recyclerview.widget.RecyclerView
-android:id="@+id/rvBookings"
-android:layout_width="match_parent"
-android:layout_height="0dp"
-android:layout_marginTop="16dp"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-android:background="@drawable/rounded_card_background"
-app:layout_constraintTop_toBottomOf="@id/tvAdminTitle" />
+    <!-- Scrollable Container (ScrollView) -->
+    <ScrollView
+        android:id="@+id/svContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvAdminTitle"
+        app:layout_constraintBottom_toTopOf="@id/btnAddRooms">
 
-    <!-- Logout Button -->
-<Button
-android:id="@+id/btnLogout"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:text="Logout"
-android:textSize="16sp"
-android:textColor="#FFFFFF"
-android:backgroundTint="#FF5722"
-    android:layout_marginTop="16dp"
-    android:background="@drawable/rounded_button_background"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent" />
+        <!-- Vertical LinearLayout inside ScrollView -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- RecyclerView to display bookings -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvBookings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_card_background" />
+
+            <!-- Add Rooms Button -->
+            <Button
+                android:id="@+id/btnAddRooms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Rooms"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#4CAF50"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/rounded_button_background" />
+
+            <!-- Logout Button -->
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#FF5722"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/rounded_button_background" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
